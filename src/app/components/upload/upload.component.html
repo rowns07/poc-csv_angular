@@ -1,0 +1,27 @@
+<input type="file" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" >
+
+<table class="minimalistBlack" *ngIf="records.length > 0">    
+  <thead>    
+    <tr>    
+      <th>ID </th>    
+      <th>Title </th>    
+      <th>Description </th>    
+      <th>Published </th>    
+    </tr>    
+  </thead>    
+  <tbody>    
+    <tr *ngFor="let record of records as TutorialModel;let i = index;">    
+      <td> <span>{{record.id}}</span> </td>  
+      <td> <span>{{record.title}}</span> </td>    
+      <td> <span>{{record.description}}</span> </td>    
+      <td> <span>{{record.published}}</span> </td>    
+      <td> <span>{{record.updatedAt}}</span> </td>    
+      <td> <span>{{record.createdAt}}</span> </td>    
+    </tr>    
+  </tbody>    
+</table>     
+
+registros: {{records.length}}
+
+
+<button (click)="create()">CRIAR ITEM</button>

@@ -1,18 +1,25 @@
-import { Component, ViewChild } from '@angular/core';
-import { CsvModel } from './csv-model';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { TutorialModel } from 'src/app/models/tutorial-model';
+import { CsvService } from 'src/app/services/csv.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-upload',
+  templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.scss']
 })
-export class AppComponent {
-  title = 'Vai Corinthians'
+export class UploadComponent implements OnInit {
 
   public records: any[] = [];
-  public testeCsv: CsvModel;
+  public uploadCsv: TutorialModel;
   public valorTotal: number;
   @ViewChild('csvReader') csvReader: any;
+  public testeTutorial: TutorialModel;
+
+  constructor(public csvService: CsvService) { }
+
+  ngOnInit(): void {
+    this.teste();
+  }
 
   uploadListener(event: any): void {
 
@@ -45,21 +52,20 @@ export class AppComponent {
   }
 
   getDataRecordsArrayFromCSVFile(csvRecordsArray: any[], headerLength: any) {
-    let csvArr: Array<CsvModel> = [];
+    let csvArr: Array<TutorialModel> = [];
     let totalIdade: number[] = [];
 
     for (let i = 1; i < csvRecordsArray.length; i++) {
       let curruntRecord = (csvRecordsArray[i]).split(',');
+      console.log("curruntRecord", curruntRecord);
 
       if (curruntRecord.length == headerLength) {
-        let csvRecord: CsvModel = new CsvModel();
+        let csvRecord: TutorialModel = new TutorialModel();
         csvRecord.id = curruntRecord[0];
-        csvRecord.firstName = curruntRecord[1].trim();
-        csvRecord.lastName = curruntRecord[2].trim();
-        csvRecord.age = curruntRecord[3];
-        csvRecord.position = curruntRecord[4].trim();
-        csvRecord.mobile = curruntRecord[5].trim();
-         this.testeCsv = curruntRecord;
+        csvRecord.title = curruntRecord[1];
+        csvRecord.description = curruntRecord[2].trim();
+        csvRecord.published = curruntRecord[3].trim();
+        this.uploadCsv = curruntRecord;
 
         csvArr.push(csvRecord);
         console.log('csvRecord', csvRecord);
@@ -70,7 +76,7 @@ export class AppComponent {
           return valorAcumulado + proximoValor
         })
       }
-      console.log('VALOR TOTAL',this.valorTotal);
+      console.log('VALOR TOTAL', this.valorTotal);
     }
     console.log('TESTE', csvArr);
     return csvArr;
@@ -92,5 +98,32 @@ export class AppComponent {
   fileReset() {
     this.csvReader.nativeElement.value = "";
     this.records = [];
+  }
+
+  teste() {
+    this.csvService.list()
+      .subscribe(dados => {
+        console.log("DADOS BAIXADOS", dados)
+      })
+  }
+
+  create() {
+    const item: TutorialModel = {
+      id: 23,
+      title: "Criado Pelo Angular 2 ",
+      description: "ANGULAR",
+      published: true
+    }
+
+    this.csvService.newItem(item).subscribe({
+      next: data => {
+        console.log('DEU CERTO', data)
+      }, error: error => {
+        console.log(error)
+      }
+    });
+    // this.teste();
+    console.log('apertou')
+
   }
 }
